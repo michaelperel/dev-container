@@ -1,0 +1,60 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
+// https://github.com/microsoft/vscode-dev-containers/tree/master/containers/docker-existing-dockerfile
+{
+	"name": "Dev Dockerfile",
+	"dockerFile": "Dockerfile",
+	// The optional 'runArgs' property can be used to specify additional runtime arguments.
+	"runArgs": [
+		// Enable go debugger
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined",
+		// map host docker daemon into container for sibling containers
+		"-v",
+		"/var/run/docker.sock:/var/run/docker.sock",
+		"-v",
+		"${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-copy:ro"
+	],
+	"postCreateCommand": "mkdir -p /root/.ssh && cp -r /root/.ssh-copy/* /root/.ssh && chmod 700 /root/.ssh && chmod 600 /root/.ssh/*",
+	"settings": {
+		// General settings
+		"files.eol": "\n",
+		"terminal.integrated.shell.linux": "/bin/bash",
+		// Go settings
+		// Go recommended settings with modules: https://github.com/golang/tools/blob/master/gopls/doc/vscode.md#vscode
+		"go.useLanguageServer": true,
+		"go.lintTool": "golangci-lint",
+		"go.lintFlags": [
+			"--fast"
+		],
+		"[go]": {
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.organizeImports": true
+			},
+			// Optional: Disable snippets, as they conflict with completion ranking.
+			"editor.snippetSuggestions": "none"
+		},
+		"[go.mod]": {
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.organizeImports": true
+			}
+		},
+		"gopls": {
+			// Add parameter placeholders when completing a function.
+			"usePlaceholders": true
+		},
+		// Python settings
+		"python.pythonPath": "/usr/local/anaconda3/bin/python",
+		"python.formatting.blackPath": "/usr/local/anaconda3/bin/black",
+		"python.formatting.provider": "black",
+		"[python]": {
+			"editor.formatOnSave": true,
+		}
+	},
+	"extensions": [
+		"ms-vscode.go",
+		"ms-python.python"
+	]
+}

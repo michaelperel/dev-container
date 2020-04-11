@@ -1,0 +1,11 @@
+" Plugins
+
+" Install plugins
+call plug#begin('~/.vim/plugged')
+Plug 'preservim/nerdtree'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clangd-completer --go-completer' }
+Plug 'morhetz/gruvbox'
+Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-fugitive'
+call plug#end()
+

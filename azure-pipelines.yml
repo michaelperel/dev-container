@@ -1,0 +1,32 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    set -euo pipefail
+    DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/michaelperel/docker-lock | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)"
+    curl -fsSL "https://github.com/michaelperel/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock-linux" -o "docker-lock"
+    chmod +x docker-lock
+  displayName: install docker-lock
+
+- script: ./docker-lock lock rewrite
+  displayName: rewrite base images
+
+- script: docker build -f .devcontainer/Dockerfile -t mperel/dev-container .devcontainer
+  displayName: build
+
+- task: Docker@2
+  displayName: login
+  inputs:
+    command: login
+    containerRegistry: docker-registry
+
+- task: Docker@2
+  displayName: push
+  inputs:
+    command: push
+    repository: mperel/dev-container
+    tags: latest
