@@ -32,6 +32,13 @@ RUN DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/michaelperel/docker-
 ## Install latest Azure CLI
 RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
 
+## Install Azure Functions Core Tools
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
+    mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list' && \
+    apt-get update && \
+    apt-get install azure-functions-core-tools
+
 ## Install latest kubectl
 RUN KUBECTL_VERSION="$(curl -fsSL https://storage.googleapis.com/kubernetes-release/release/stable.txt)" && \
     curl -fsSL "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && \
