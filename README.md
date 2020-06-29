@@ -8,6 +8,7 @@
 * docker-compose
 * docker-lock
 * az cli
+* azure function core tools
 * kubectl
 * helm
 * fluxctl
