@@ -13,6 +13,8 @@ autocmd BufWritePost *.py silent! execute "!black <afile> >/dev/null 2>&1" | red
 :nnoremap <C-g> :NERDTreeToggle<CR>
 " Quit NERDTree if it is the last buffer
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Open on the left side by default
+let g:NERDTreeWinPos = "left"
 
 " YCM
 " Make YCM go away when done with it
@@ -24,4 +26,3 @@ map <leader>d :YcmCompleter GetDoc<CR>
 " Colorscheme
 set t_Co=256
 set term=xterm-256color
-colorscheme gruvbox

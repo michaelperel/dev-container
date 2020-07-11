@@ -79,23 +79,18 @@ ENV PATH="/usr/local/go/bin:${HOME}/go/bin:${PATH}"
 
 # Customize environment
 
-## Install vim-awesome basic edition
-RUN curl -fsSL https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim > "${HOME}/.vimrc"
+## Install Vim Awesome
+RUN git clone --depth=1 https://github.com/amix/vimrc.git "${HOME}/.vim_runtime" && \
+    sh "${HOME}/.vim_runtime/install_awesome_vimrc.sh"
 
-## Install vim-plug
-RUN curl -fsSLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+## Add custom vimrc
+COPY vim/my_configs.vim "${HOME}/.vim_runtime/my_configs.vim"
 
-## Install vim plugins
-COPY vim/plugins .
-RUN cat plugins >> "${HOME}/.vimrc" && \
-    vim +'PlugInstall --sync' +qa > /dev/null && \
-    rm plugins
-
-## Customize vim-awesome's vimrc
-COPY vim/customrc .
-RUN cat customrc >> "${HOME}/.vimrc" && \
-    rm customrc
+## Install YouCompleteMe vim plugin
+RUN git clone https://github.com/ycm-core/YouCompleteMe.git "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
+    cd "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
+    git submodule update --init --recursive "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
+    ./install.py --clangd-completer --go-completer
 
 ## Set vim color support for tmux
 RUN echo "export TERM=xterm-256color" >> "${HOME}/.bashrc"
