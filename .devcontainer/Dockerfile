@@ -104,6 +104,9 @@ RUN pip install -r requirements.txt && \
 RUN GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
     curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b "${HOME}/go/bin" "v${GOLANGCI_LINT_VERSION}"
 
+## Add helm repos
+RUN helm repo add fluxcd https://charts.fluxcd.io
+
 # Cleanup
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
