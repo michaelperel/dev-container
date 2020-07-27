@@ -80,7 +80,7 @@ ENV PATH="/usr/local/go/bin:${HOME}/go/bin:${PATH}"
 ## Install latest Node, NPM
 RUN NODE_VERSION=14 && \
     curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
-    apt-get install nodejs
+    apt-get install nodejs -y
 
 # Customize environment
 
