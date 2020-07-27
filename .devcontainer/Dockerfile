@@ -77,6 +77,11 @@ RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | 
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" | tar -xz -C /usr/local
 ENV PATH="/usr/local/go/bin:${HOME}/go/bin:${PATH}"
 
+## Install latest Node, NPM
+RUN NODE_VERSION=14 && \
+    curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
+    apt-get install nodejs
+
 # Customize environment
 
 ## Install Vim Awesome
