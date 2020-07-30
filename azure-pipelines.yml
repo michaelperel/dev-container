@@ -4,6 +4,14 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+schedules:
+- cron: "0 4 * * *"
+  displayName: "Daily build at midnight EDT"
+  branches:
+    include:
+    - master
+  always: true
+
 steps:
 - script: |
     set -euo pipefail
