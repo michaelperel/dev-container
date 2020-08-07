@@ -13,7 +13,9 @@
 		"-v",
 		"/var/run/docker.sock:/var/run/docker.sock",
 		"-v",
-		"${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-copy:ro"
+		"${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-copy:ro",
+		"--network",
+		"host",
 	],
 	"postCreateCommand": "mkdir -p /root/.ssh && cp -r /root/.ssh-copy/* /root/.ssh && chmod 700 /root/.ssh && chmod 600 /root/.ssh/*",
 	"settings": {
