@@ -39,17 +39,13 @@ docker run -it \
 -v "${HOME}"/.gitconfig:/root/.gitconfig:ro \
 -v "${PWD}":/workspaces/app \
 -v /var/run/docker.sock:/var/run/docker.sock \
+--network host \
 mperel/dev-container
 ```
 
 * To run on Windows (CMD):
 ```
-docker run -it \
--v "%USERPROFILE%"/.ssh:/root/.ssh-copy:ro \
--v "%USERPROFILE%"/.gitconfig:/root/.gitconfig:ro \
--v "%cd%":/workspaces/app \
--v /var/run/docker.sock:/var/run/docker.sock \
-mperel/dev-container
+docker run -it -v "%USERPROFILE%"/.ssh:/root/.ssh-copy:ro -v "%USERPROFILE%"/.gitconfig:/root/.gitconfig:ro -v "%cd%":/workspaces/app -v /var/run/docker.sock:/var/run/docker.sock --network host mperel/dev-container
 ```
 
 # Editor

@@ -25,6 +25,17 @@
 		"go.lintFlags": [
 			"--fast"
 		],
+		"vim.insertModeKeyBindings": [
+			{
+				"before": [
+					"j",
+					"j"
+				],
+				"after": [
+					"<Esc>"
+				]
+			}
+		],
 		// Go recommended settings with modules: https://github.com/golang/tools/blob/master/gopls/doc/vscode.md#vscode
 		"go.useLanguageServer": true,
 		"[go]": {
@@ -56,5 +67,6 @@
 	"extensions": [
 		"golang.go",
 		"ms-python.python",
+		"vscodevim.vim",
 	]
 }
