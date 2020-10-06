@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM --platform="${BUILDPLATFORM}" ubuntu:focal
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
