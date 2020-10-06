@@ -4,8 +4,8 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # Install environment
 
-## Set architecture
-ARG ARCH=amd64
+## linux/amd64 or linux/arm64 supported
+ARG TARGETPLATFORM
 
 ## Create nonroot user with sudo support
 ARG USERNAME=nonroot
@@ -57,6 +57,7 @@ ENV GOROOT="${HOME}/.local/go"
 ENV GOPATH="${HOME}/go"
 ENV PATH="${GOPATH}/bin:${GOROOT}/bin:${PATH}"
 RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+    ARCH=$(basename ${TARGETPLATFORM}) && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C "${HOME}/.local"
 
 ## Install latest go libraries
@@ -80,6 +81,7 @@ RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
 ## Install latest kubectl
 RUN KUBECTL_VERSION="$(curl -fsSL https://storage.googleapis.com/kubernetes-release/release/stable.txt)" && \
+    ARCH=$(basename ${TARGETPLATFORM}) && \
     curl -fsSL "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl" -o "${HOME}/.local/bin/kubectl" && \
     chmod +x "${HOME}/.local/bin/kubectl"
 
@@ -88,11 +90,13 @@ RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-he
 
 ## Install latest fluxctl
 RUN FLUXCTL_VERSION="$(git ls-remote https://github.com/fluxcd/flux | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+    ARCH=$(basename ${TARGETPLATFORM}) && \
     curl -fsSL "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_${ARCH}" -o "${HOME}/.local/bin/fluxctl" && \
     chmod +x "${HOME}/.local/bin/fluxctl"
 
 ## Install latest terraform
 RUN TERRAFORM_VERSION="$(curl -fsSL https://releases.hashicorp.com/terraform/ | grep -oE "[0-9]+\.[0-9]+\.[0-9]+<" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)" && \
+    ARCH=$(basename ${TARGETPLATFORM}) && \
     [[ "${ARCH}" == "arm64" ]] && ARCH=${ARCH//[0-9]/}; \
     curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip" -o "${HOME}/.local/terraform.zip" && \
     unzip "${HOME}/.local/terraform.zip" -d "${HOME}/.local/bin"
