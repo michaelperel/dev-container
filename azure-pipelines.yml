@@ -35,9 +35,11 @@ steps:
     containerRegistry: docker-registry
 
 - script: |
+    set -e
     export USERNAME=nonroot
     export USER_UID=1000
     export USER_GID=1000
+    sudo mount -n -o remount,suid /
     sudo groupadd --non-unique --gid "${USER_GID}" "${USERNAME}"
     sudo useradd --non-unique --uid "${USER_UID}" --gid "${USER_GID}" -m "${USERNAME}"
     sudo echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}"
