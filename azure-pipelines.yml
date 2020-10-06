@@ -34,5 +34,7 @@ steps:
     command: login
     containerRegistry: docker-registry
 
-- script: docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
-  displayName: build
+- script: |
+    docker buildx create --use
+    docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+  displayName: build & push
