@@ -12,12 +12,7 @@
 		// map host docker daemon into container for sibling containers
 		"-v",
 		"/var/run/docker.sock:/var/run/docker.sock",
-		"-v",
-		"${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-copy:ro",
-		"--network",
-		"host",
 	],
-	"postCreateCommand": "mkdir -p /root/.ssh && cp -r /root/.ssh-copy/* /root/.ssh && chmod 700 /root/.ssh && chmod 600 /root/.ssh/*",
 	"settings": {
 		// General settings
 		"files.eol": "\n",
@@ -59,8 +54,8 @@
 			"usePlaceholders": true,
 		},
 		// Python settings
-		"python.pythonPath": "/usr/local/anaconda3/bin/python",
-		"python.formatting.blackPath": "/usr/local/anaconda3/bin/black",
+		"python.pythonPath": "/usr/bin/python3",
+		"python.formatting.blackPath": "/home/nonroot/.local/bin/black",
 		"python.formatting.provider": "black",
 		"[python]": {
 			"editor.formatOnSave": true,

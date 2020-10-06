@@ -3,10 +3,9 @@
 		".devcontainer/Dockerfile": [
 			{
 				"name": "ubuntu",
-				"tag": "bionic",
-				"digest": "c32bd2e76e7688eeb1bb39754fff7cdfc571626fc1abfded4f82a90de79f8d10"
+				"tag": "focal",
+				"digest": "bc2f7250f69267c9c6b66d7b6a81a54d3878bb85f1ebb5f951c896d13e6ba537"
 			}
 		]
-	},
-	"composefiles": {}
+	}
 }

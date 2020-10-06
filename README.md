@@ -1,51 +1,38 @@
 [![Build Status](https://dev.azure.com/michaelsethperel/dev-container/_apis/build/status/michaelperel.dev-container?branchName=master)](https://dev.azure.com/michaelsethperel/dev-container/_build/latest?definitionId=5&branchName=master)
 
 # What is this?
-* A container with the latest version of common tools for development
+* A container based on ubuntu with the latest version of common tools for development
 
 # What is included
 * docker
 * docker-compose
-* docker-lock
 * az cli
-* azure function core tools
 * kubectl
 * helm
 * fluxctl
-* kubeseal
 * terraform
-* anaconda 3 distribution of python
+* python 3
 * go
 * vim with a sensible configuration
 
 # Usage
 * The container is a few gigabytes. It prioritizes readability and breadth of tools over size.
-* To use a recently built version:
-
+* By default, the container runs as a nonroot user with UID and GID = 1000. This user exists
+so that if you map a volume, file permissions will not be root. On MacOS, you do not need
+to change these values. On Linux, you should change these values to match your current
+UID and GID on the host. Either way, the following build command will work:
 ```
-docker pull mperel/dev-container
-```
-
-* To build from scratch:
-
-```
-docker build -f .devcontainer/Dockerfile -t mperel/dev-container .devcontainer
+docker build -f .devcontainer/Dockerfile --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g) -t mperel/dev-container .devcontainer
 ```
 
-* To run on Linux/Mac:
+* To build for arm64 (raspberry pi 4, for instance):
 ```
-docker run -it \
--v "${HOME}"/.ssh:/root/.ssh-copy:ro \
--v "${HOME}"/.gitconfig:/root/.gitconfig:ro \
--v "${PWD}":/workspaces/app \
--v /var/run/docker.sock:/var/run/docker.sock \
---network host \
-mperel/dev-container
+docker build -f .devcontainer/Dockerfile --build-arg ARCH=arm64 --build-arg USER_UID=$(id -u) --build-arg USER_GID=$(id -g) -t mperel/dev-container .devcontainer
 ```
 
-* To run on Windows (CMD):
+* To run:
 ```
-docker run -it -v "%USERPROFILE%"/.ssh:/root/.ssh-copy:ro -v "%USERPROFILE%"/.gitconfig:/root/.gitconfig:ro -v "%cd%":/workspaces/app -v /var/run/docker.sock:/var/run/docker.sock --network host mperel/dev-container
+docker run -it -v ${PWD}:/home/nonroot/workspaces/app -v /var/run/docker.sock:/var/run/docker.sock mperel/dev-container
 ```
 
 # Editor
