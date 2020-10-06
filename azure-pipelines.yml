@@ -35,6 +35,13 @@ steps:
     containerRegistry: docker-registry
 
 - script: |
+    export USERNAME=nonroot
+    export USER_UID=1000
+    export USER_GID=1000
+    groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
+    && useradd --non-unique --uid "${USER_UID}" --gid "${USER_GID}" -m "${USERNAME}" \
+    && echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
+    && chmod 0440 "/etc/sudoers.d/${USERNAME}"
     export DOCKER_CLI_EXPERIMENTAL=enabled
     export DOCKER_BUILDKIT=1
     echo '{ "experimental": true }' | sudo tee /etc/docker/daemon.json
