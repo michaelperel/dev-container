@@ -20,6 +20,7 @@ steps:
     chmod +x docker-lock
   displayName: install docker-lock
 - script: |
+    set -euo pipefail
     mkdir -p ~/.docker/cli-plugins
     curl -fsSL https://github.com/docker/buildx/releases/download/v0.4.2/buildx-v0.4.2.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
     chmod +x ~/.docker/cli-plugins/docker-buildx
@@ -35,11 +36,23 @@ steps:
     containerRegistry: docker-registry
 
 - script: |
-    set -e
+    set -euo pipefail
+    export DOCKER_CLI_EXPERIMENTAL=enabled
+    export DOCKER_BUILDKIT=1
+    sudo service docker restart
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    docker buildx create --use
+    docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+  displayName: build
+
+- script: |
+    set -euo pipefail
     export DOCKER_CLI_EXPERIMENTAL=enabled
     export DOCKER_BUILDKIT=1
     sudo service docker restart
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker buildx create --use
     docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: build & push

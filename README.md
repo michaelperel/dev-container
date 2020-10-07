@@ -11,9 +11,11 @@
 * helm
 * fluxctl
 * terraform
-* python 3
+* python 3, pip3
 * go
+* node, npm
 * vim with a sensible configuration
+* tmux
 
 # Using a Pre-built Container
 * The container is a few gigabytes. It prioritizes readability and breadth of tools over size.
@@ -23,7 +25,7 @@ docker run -it -v ${PWD}:/home/nonroot/workspaces/app mperel/dev-container
 ```
 
 # Building From Scratch
-* By default, the container runs as a nonroot user with UID and GID = 1000. This user exists
+* By default, the container runs as a nonroot user (as a sudoer) with UID and GID = 1000. This user exists
 so that if you map a volume, file permissions will not be root. On MacOS, you do not need
 to change these values. On Linux, if you are not using the first user on your
 machine, you should change these values to match your current
@@ -52,5 +54,5 @@ docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd
     * When all tools are finished installing, in the command palette
     type: `Developer: Reload Window`
     * The docker daemon is mapped from the host into the dev container,
-    so you can use docker and docker-compose commands from within
-    the container as if they were run on the host
+    so you can use docker and docker-compose commands (with sudo) from within
+    the container as if they were run on the host. 

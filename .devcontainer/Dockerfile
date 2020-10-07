@@ -30,7 +30,9 @@ RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
 ## Install latest python
 RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
-    apt-get -yq install python3 python3-dev python3-venv python3-pip
+    apt-get -yq install python3 python3-dev python3-venv python3-pip && \
+    ln -s /usr/bin/pip3 /usr/bin/pip && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 ## Install latest python libraries
 RUN pip3 install black
@@ -44,7 +46,6 @@ RUN NODE_VERSION=14 && \
 RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C /usr/local
-ENV PATH="/usr/local/go/bin:${PATH}"
 
 ## Install latest go libraries
 RUN GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
@@ -101,6 +102,12 @@ RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
     chown -R "${USER_UID}":"${USER_GID}" "${HOME}"
 
 USER "${USERNAME}"
+
+## Set Env
+ENV GOROOT="/usr/local/go"
+ENV GOPATH="${HOME}/go"
+ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
+RUN echo "export PATH=${PATH}" | tee -a "${HOME}/.bashrc"
 
 ## Install Vim Awesome
 RUN mkdir -p "${HOME}/.vim_runtime" && \
