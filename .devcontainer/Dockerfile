@@ -32,6 +32,11 @@ RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get -yq install python3 python3-dev python3-venv python3-pip
 
+## Install latest node, npm
+RUN NODE_VERSION=14 && \
+    curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
+    apt-get -yq install nodejs
+
 ## Cleanup
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -92,7 +97,8 @@ RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
     && echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
     && chmod 0440 "/etc/sudoers.d/${USERNAME}" && \
     mkdir -p $HOME && \
-    usermod -aG docker "${USERNAME}"
+    usermod -aG docker "${USERNAME}" && \
+    chown -R ${USER_UID}:${USER_GID} ${HOME}
 
 USER "${USERNAME}"
 
