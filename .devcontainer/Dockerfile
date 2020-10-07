@@ -50,8 +50,7 @@ RUN GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-
     curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b /usr/local/bin "v${GOLANGCI_LINT_VERSION}"
 
 ## Install latest docker
-RUN curl -fsSL https://get.docker.com | bash && \
-    usermod -aG docker "${USERNAME}"
+RUN curl -fsSL https://get.docker.com | bash
 
 ## Install latest docker-compose
 RUN pip3 install docker-compose
@@ -92,7 +91,8 @@ RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
     && apt-get -yq install sudo \
     && echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
     && chmod 0440 "/etc/sudoers.d/${USERNAME}" && \
-    mkdir -p $HOME
+    mkdir -p $HOME && \
+    usermod -aG docker "${USERNAME}"
 
 USER "${USERNAME}"
 
