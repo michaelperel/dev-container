@@ -19,12 +19,15 @@ steps:
     curl -fsSL "https://github.com/michaelperel/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock-linux" -o "docker-lock"
     chmod +x docker-lock
   displayName: install docker-lock
+- script: |
+    set -euo pipefail
+    mkdir -p ~/.docker/cli-plugins
+    curl -fsSL https://github.com/docker/buildx/releases/download/v0.4.2/buildx-v0.4.2.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+    chmod +x ~/.docker/cli-plugins/docker-buildx
+  displayName: install docker buildx
 
 - script: ./docker-lock lock rewrite
   displayName: rewrite base images
-
-- script: docker build -f .devcontainer/Dockerfile -t mperel/dev-container .devcontainer
-  displayName: build
 
 - task: Docker@2
   displayName: login
@@ -32,9 +35,24 @@ steps:
     command: login
     containerRegistry: docker-registry
 
-- task: Docker@2
-  displayName: push
-  inputs:
-    command: push
-    repository: mperel/dev-container
-    tags: latest
+- script: |
+    set -euo pipefail
+    export DOCKER_CLI_EXPERIMENTAL=enabled
+    export DOCKER_BUILDKIT=1
+    sudo service docker restart
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    docker buildx create --use
+    docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+  condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+  displayName: build
+
+- script: |
+    set -euo pipefail
+    export DOCKER_CLI_EXPERIMENTAL=enabled
+    export DOCKER_BUILDKIT=1
+    sudo service docker restart
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    docker buildx create --use
+    docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  displayName: build & push
