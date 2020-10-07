@@ -42,7 +42,7 @@ steps:
     sudo service docker restart
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker buildx create --use
-    docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+    docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-container .devcontainer
   condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: build
 
@@ -53,6 +53,6 @@ steps:
     sudo service docker restart
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     docker buildx create --use
-    docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
+    docker buildx build --push -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-container .devcontainer
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: build & push
