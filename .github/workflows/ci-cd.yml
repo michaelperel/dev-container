@@ -33,7 +33,8 @@ jobs:
       - name: build images and push to dockerhub
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: .devcontainer
+          file: .devcontainer/Dockerfile
           push: false
           tags: mperel/dev-container:latest
           platforms: linux/amd64,linux/arm64
