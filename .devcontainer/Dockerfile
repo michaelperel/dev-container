@@ -109,6 +109,14 @@ ENV GOPATH="${HOME}/go"
 ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
 RUN echo "export PATH=${PATH}" | tee -a "${HOME}/.bashrc"
 
+## Install latest docker-lock
+RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
+    DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/safe-waters/docker-lock | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+    ARCH=$(basename "${TARGETPLATFORM}") && \
+    [[ "${ARCH}" == "amd64" ]] && ARCH="x86_64"; \
+    curl -fsSL "https://github.com/safe-waters/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock_${DOCKER_LOCK_VERSION}_Linux_${ARCH}.tar.gz" | tar -xz -C "${HOME}/.docker/cli-plugins" && \
+    chmod +x "${HOME}/.docker/cli-plugins/docker-lock"
+
 ## Install Vim Awesome
 RUN mkdir -p "${HOME}/.vim_runtime" && \
     git clone --depth=1 https://github.com/amix/vimrc.git "${HOME}/.vim_runtime" && \
