@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/michaelsethperel/dev-container/_apis/build/status/michaelperel.dev-container?branchName=master)](https://dev.azure.com/michaelsethperel/dev-container/_build/latest?definitionId=5&branchName=master)
-
 # What is this?
 * A container based on ubuntu with the latest version of common tools for development
 
