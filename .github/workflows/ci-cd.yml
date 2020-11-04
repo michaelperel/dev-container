@@ -18,6 +18,10 @@ jobs:
         run: docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite --tempdir .
         shell: bash
 
+      - name: CAT
+        run: cat .devcontainer/Dockerfile
+        shell: bash
+
       - name: setup qemu
         uses: docker/setup-qemu-action@v1
 
