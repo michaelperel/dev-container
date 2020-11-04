@@ -6,6 +6,7 @@
 # What is included
 * docker
 * docker-compose
+* docker-lock
 * az cli
 * kubectl
 * helm
