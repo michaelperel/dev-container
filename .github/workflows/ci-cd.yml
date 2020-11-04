@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: docker lock rewrite
-        run: docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite
+        run: docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite --tempdir .
         shell: bash
 
       - name: setup qemu
