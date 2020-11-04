@@ -1,3 +1,6 @@
+![ci](https://github.com/michaelperel/dev-container/workflows/ci/badge.svg)
+![cd](https://github.com/michaelperel/dev-container/workflows/cd/badge.svg)
+
 # What is this?
 * A container based on ubuntu with the latest version of common tools for development
 
