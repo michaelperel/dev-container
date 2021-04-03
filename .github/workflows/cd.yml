@@ -3,6 +3,8 @@ name: cd
 on:
   push:
     branches: [ master ]
+  schedule:
+    - cron: "0 4 * * *"
 
 jobs:
   build-and-push:
@@ -13,7 +15,7 @@ jobs:
       - name: docker lock rewrite
         run: |
           set -euo pipefail
-          docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite --tempdir .
+          docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite
           sudo chmod +r .devcontainer/Dockerfile
         shell: bash
 
