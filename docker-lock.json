@@ -3,8 +3,8 @@
 		".devcontainer/Dockerfile": [
 			{
 				"name": "ubuntu",
-				"tag": "focal",
-				"digest": "bc2f7250f69267c9c6b66d7b6a81a54d3878bb85f1ebb5f951c896d13e6ba537"
+				"tag": "latest",
+				"digest": "cf31af331f38d1d7158470e095b132acd126a7180a54f263d386da88eb681d93"
 			}
 		]
 	}

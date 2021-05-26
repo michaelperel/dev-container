@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu
 
 SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
@@ -7,9 +7,12 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 ## linux/amd64 or linux/arm64 supported
 ARG TARGETPLATFORM
 
+## Ensure packages do not prompt for input
+ARG DEBIAN_FRONTEND=noninteractive
+
 ## Install basic tools
-RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
-    apt-get update && \
+RUN apt-get -yq update && \
+    apt-get -yq upgrade && \
     apt-get -yq install \
     git \
     vim \
@@ -28,10 +31,9 @@ RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
     uuid-runtime
 
 ## Install latest python
-RUN add-apt-repository ppa:deadsnakes/ppa && \
+RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
     apt-get -yq install python3 python3-dev python3-venv python3-pip && \
-    ln -s /usr/bin/pip3 /usr/bin/pip && \
     ln -s /usr/bin/python3 /usr/bin/python
 
 ## Install latest python libraries
