@@ -6,6 +6,9 @@ set colorcolumn=80
 autocmd BufWritePost *.go silent! execute "!gofmt -s -w <afile> >/dev/null 2>&1" | redraw!
 autocmd BufWritePost *.py silent! execute "!black <afile> >/dev/null 2>&1" | redraw!
 
+" Override bug until merged: https://github.com/amix/vimrc/pull/621
+let g:snipMate = { 'snippet_version' : 1 }
+
 " Plugins
 
 " NERD Tree

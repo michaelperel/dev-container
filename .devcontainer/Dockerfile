@@ -136,6 +136,9 @@ RUN git clone https://github.com/ycm-core/YouCompleteMe.git "${HOME}/.vim_runtim
 ## Set vim color support for tmux
 RUN echo "export TERM=xterm-256color" | tee -a "${HOME}/.bashrc"
 
+## Set tmux shell to /bin/bash
+RUN echo "set-option -g default-command /bin/bash" >> "${HOME}/.tmux.conf"
+
 # Mimic VSCode's workspace
 RUN mkdir -p "${HOME}/workspaces/app"
 WORKDIR "${HOME}/workspaces/app"
