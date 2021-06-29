@@ -28,7 +28,8 @@ RUN apt-get -yq update && \
     software-properties-common \
     jq \
     gettext-base \
-    uuid-runtime
+    uuid-runtime \
+    postgresql-client
 
 ## Install latest python
 RUN add-apt-repository ppa:deadsnakes/ppa -y && \
@@ -70,12 +71,6 @@ RUN KUBECTL_VERSION="$(curl -fsSL https://storage.googleapis.com/kubernetes-rele
 
 ## Install latest helm
 RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-## Install latest fluxctl
-RUN FLUXCTL_VERSION="$(git ls-remote https://github.com/fluxcd/flux | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
-    ARCH=$(basename "${TARGETPLATFORM}") && \
-    curl -fsSL "https://github.com/fluxcd/flux/releases/download/${FLUXCTL_VERSION}/fluxctl_linux_${ARCH}" -o /usr/local/bin/fluxctl && \
-    chmod +x /usr/local/bin/fluxctl
 
 ## Install latest terraform
 RUN TERRAFORM_VERSION="$(curl -fsSL https://releases.hashicorp.com/terraform/ | grep -oE "[0-9]+\.[0-9]+\.[0-9]+<" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)" && \

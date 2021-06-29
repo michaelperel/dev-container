@@ -11,13 +11,13 @@
 * az cli
 * kubectl
 * helm
-* fluxctl
 * terraform
 * python 3, pip3
 * go
 * node, npm
 * vim with a sensible configuration
 * tmux
+* psql
 
 # Using a Pre-built Container
 * The container is a few gigabytes. It prioritizes readability and breadth of tools over size.
