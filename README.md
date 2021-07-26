@@ -13,7 +13,10 @@
 * helm
 * terraform
 * python 3, pip3
+* black
 * go
+* golangci-lint
+* dlv
 * node, npm
 * vim with a sensible configuration
 * tmux

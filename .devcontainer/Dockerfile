@@ -37,9 +37,6 @@ RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get -yq install python3 python3-dev python3-venv python3-pip && \
     ln -s /usr/bin/python3 /usr/bin/python
 
-## Install latest python libraries
-RUN pip3 install black
-
 ## Install latest node, npm
 RUN NODE_VERSION=14 && \
     curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
@@ -49,10 +46,6 @@ RUN NODE_VERSION=14 && \
 RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C /usr/local
-
-## Install latest go libraries
-RUN GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
-    curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | bash -s -- -b /usr/local/bin "v${GOLANGCI_LINT_VERSION}"
 
 ## Install latest docker
 RUN curl -fsSL https://get.docker.com | bash
@@ -103,8 +96,16 @@ USER "${USERNAME}"
 ## Set Env
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="${HOME}/go"
-ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
+ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${HOME}/.local/bin:${PATH}"
 RUN echo "export PATH=${PATH}" | tee -a "${HOME}/.bashrc"
+
+## Install latest python libraries
+RUN pip3 install black
+
+## Install latest go libraries
+RUN go install github.com/go-delve/delve/cmd/dlv@latest && \
+    GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+    curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo bash -s -- -b "${GOPATH}/bin" "v${GOLANGCI_LINT_VERSION}"
 
 ## Install latest docker-lock
 RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
@@ -131,8 +132,9 @@ RUN git clone https://github.com/ycm-core/YouCompleteMe.git "${HOME}/.vim_runtim
 ## Set vim color support for tmux
 RUN echo "export TERM=xterm-256color" | tee -a "${HOME}/.bashrc"
 
-## Set tmux shell to /bin/bash
-RUN echo "set-option -g default-command /bin/bash" >> "${HOME}/.tmux.conf"
+## Set tmux conf
+RUN echo "set-option -g default-command /bin/bash" >> "${HOME}/.tmux.conf" && \
+    echo "set-option -g mouse on" >> "${HOME}/.tmux.conf"
 
 # Mimic VSCode's workspace
 RUN mkdir -p "${HOME}/workspaces/app"
