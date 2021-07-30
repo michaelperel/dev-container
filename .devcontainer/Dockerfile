@@ -95,11 +95,6 @@ ENV GOPATH="${HOME}/go"
 ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${HOME}/.local/bin:${PATH}"
 RUN echo "export PATH=${PATH}" | sudo tee -a "${HOME}/.bashrc"
 
-## Install latest go libraries
-#RUN go install github.com/go-delve/delve/cmd/dlv@latest && \
-#    GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
-#    curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo bash -s -- -b "${GOPATH}/bin" "v${GOLANGCI_LINT_VERSION}"
-
 ## Install latest docker-lock
 RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
     DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/safe-waters/docker-lock | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
