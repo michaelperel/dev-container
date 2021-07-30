@@ -54,17 +54,9 @@
 			// Add parameter placeholders when completing a function.
 			"usePlaceholders": true,
 		},
-		// Python settings
-		"python.pythonPath": "/usr/bin/python",
-		"python.formatting.blackPath": "/usr/local/bin/black",
-		"python.formatting.provider": "black",
-		"[python]": {
-			"editor.formatOnSave": true,
-		}
 	},
 	"extensions": [
 		"golang.go",
-		"ms-python.python",
 		"vscodevim.vim",
 	]
 }
