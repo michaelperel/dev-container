@@ -4,10 +4,10 @@ SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
 # Create system wide environment as root
 
-## linux/amd64 or linux/arm64 supported
+## Supports linux/amd64 or linux/arm64
 ARG TARGETPLATFORM
 
-## Ensure packages do not prompt for input
+## Ensure installation does not prompt for input
 ARG DEBIAN_FRONTEND=noninteractive
 
 ## Install basic tools
@@ -36,11 +36,6 @@ RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
     apt-get -yq install python3 python3-dev python3-venv python3-pip && \
     ln -s /usr/bin/python3 /usr/bin/python
-
-## Install latest node, npm
-RUN NODE_VERSION=14 && \
-    curl -fsSL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
-    apt-get -yq install nodejs
 
 ## Install latest go
 RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
@@ -72,10 +67,6 @@ RUN TERRAFORM_VERSION="$(curl -fsSL https://releases.hashicorp.com/terraform/ | 
     curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip" -o terraform.zip && \
     unzip terraform.zip -d /usr/local/bin
 
-## Cleanup
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Customize environment for nonroot user
 ARG USERNAME=nonroot
 ENV HOME=/nonroot/home
@@ -93,19 +84,16 @@ RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
 
 USER "${USERNAME}"
 
-## Set Env
+## Copy config files
+COPY .tmux.conf "${HOME}/.tmux.conf"
+COPY .bashrc "${HOME}/.bashrc"
+COPY .vimrc "${HOME}/.vimrc"
+
+## Set go environment variables
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="${HOME}/go"
 ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${HOME}/.local/bin:${PATH}"
-RUN echo "export PATH=${PATH}" | tee -a "${HOME}/.bashrc"
-
-## Install latest python libraries
-RUN pip3 install black
-
-## Install latest go libraries
-RUN go install github.com/go-delve/delve/cmd/dlv@latest && \
-    GOLANGCI_LINT_VERSION="$(git ls-remote https://github.com/golangci/golangci-lint | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
-    curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo bash -s -- -b "${GOPATH}/bin" "v${GOLANGCI_LINT_VERSION}"
+RUN echo "export PATH=${PATH}" | sudo tee -a "${HOME}/.bashrc"
 
 ## Install latest docker-lock
 RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
@@ -115,26 +103,14 @@ RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
     curl -fsSL "https://github.com/safe-waters/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock_${DOCKER_LOCK_VERSION}_Linux_${ARCH}.tar.gz" | tar -xz -C "${HOME}/.docker/cli-plugins" && \
     chmod +x "${HOME}/.docker/cli-plugins/docker-lock"
 
-## Install Vim Awesome
-RUN mkdir -p "${HOME}/.vim_runtime" && \
-    git clone --depth=1 https://github.com/amix/vimrc.git "${HOME}/.vim_runtime" && \
-    "${HOME}/.vim_runtime/install_awesome_vimrc.sh"
+## Install vim-go
+RUN git clone https://github.com/fatih/vim-go.git "${HOME}/.vim/pack/plugins/start/vim-go" && \
+    vim +GoInstallBinaries +qall && \
+    vim +"helptags ALL" +qall
 
-## Add custom vimrc
-COPY vim/my_configs.vim "${HOME}/.vim_runtime/my_configs.vim"
-
-## Install YouCompleteMe vim plugin
-RUN git clone https://github.com/ycm-core/YouCompleteMe.git "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
-    cd "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
-    git submodule update --init --recursive "${HOME}/.vim_runtime/my_plugins/YouCompleteMe" && \
-    PATH="${PATH}" ./install.py --clangd-completer --go-completer
-
-## Set vim color support for tmux
-RUN echo "export TERM=xterm-256color" | tee -a "${HOME}/.bashrc"
-
-## Set tmux conf
-RUN echo "set-option -g default-command /bin/bash" >> "${HOME}/.tmux.conf" && \
-    echo "set-option -g mouse on" >> "${HOME}/.tmux.conf"
+## Cleanup
+RUN sudo apt-get clean && \
+    sudo rm -rf /var/lib/apt/lists/*
 
 # Mimic VSCode's workspace
 RUN mkdir -p "${HOME}/workspaces/app"
