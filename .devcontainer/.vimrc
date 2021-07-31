@@ -1,6 +1,5 @@
 " Indent correctly
 filetype plugin indent on
-autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
 " Automatically close braces
 inoremap {<CR> {<CR>}<Esc>ko
@@ -32,7 +31,7 @@ let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 
-" automatically close auto complete
+" Automatically close autocomplete
 augroup completion_preview_close
  autocmd!
  autocmd CompleteDone * if !&previewwindow && &completeopt =~ 'preview' | silent! pclose | endif
