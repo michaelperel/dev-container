@@ -17,6 +17,9 @@ set number
 " Width marker
 set colorcolumn=80
 
+" Background color
+set background=dark
+
 " Goimports for saving
 let g:go_fmt_autosave = 1
 let g:go_fmt_command = "goimports"
