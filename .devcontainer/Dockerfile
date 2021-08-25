@@ -45,9 +45,6 @@ RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | 
 ## Install latest docker
 RUN curl -fsSL https://get.docker.com | bash
 
-## Install latest docker-compose
-RUN pip3 install docker-compose
-
 ## Install latest Azure CLI
 RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
 
@@ -81,13 +78,7 @@ RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
     mkdir -p "${HOME}" && \
     usermod -aG docker "${USERNAME}" && \
     chown -R "${USER_UID}":"${USER_GID}" "${HOME}"
-
 USER "${USERNAME}"
-
-## Copy config files
-COPY .tmux.conf "${HOME}/.tmux.conf"
-COPY .bashrc "${HOME}/.bashrc"
-COPY .vimrc "${HOME}/.vimrc"
 
 ## Set go environment variables
 ENV GOROOT="/usr/local/go"
@@ -103,10 +94,21 @@ RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
     curl -fsSL "https://github.com/safe-waters/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock_${DOCKER_LOCK_VERSION}_Linux_${ARCH}.tar.gz" | tar -xz -C "${HOME}/.docker/cli-plugins" && \
     chmod +x "${HOME}/.docker/cli-plugins/docker-lock"
 
+## Install compose-cli
+RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose-cli | grep refs/tags | cut -f2 | sed 's@refs/tags/@@' | sort --version-sort | tail -n 1)" && \
+   ARCH=$(basename "${TARGETPLATFORM}") && \
+   curl -fsSL "https://github.com/docker/compose-cli/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
+   chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
+
 ## Install vim-go
 RUN git clone https://github.com/fatih/vim-go.git "${HOME}/.vim/pack/plugins/start/vim-go" && \
     vim +GoInstallBinaries +qall && \
     vim +"helptags ALL" +qall
+
+## Copy config files
+COPY .tmux.conf "${HOME}/.tmux.conf"
+COPY .bashrc "${HOME}/.bashrc"
+COPY .vimrc "${HOME}/.vimrc"
 
 ## Cleanup
 RUN sudo apt-get clean && \
