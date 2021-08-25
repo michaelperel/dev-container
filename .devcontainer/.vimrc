@@ -16,6 +16,10 @@ set number
 " Width marker
 set colorcolumn=80
 
+" Maintain undo history between sessions
+set undofile
+set undodir=/tmp
+
 " Background color
 set background=dark
 
