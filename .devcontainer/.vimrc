@@ -13,9 +13,6 @@ map <leader>d :GoDoc<CR>
 " Line numbers
 set number
 
-" Width marker
-set colorcolumn=80
-
 " Maintain undo history between sessions
 set undofile
 set undodir=/tmp
