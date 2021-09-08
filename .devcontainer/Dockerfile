@@ -42,6 +42,9 @@ RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | 
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C /usr/local
 
+## Install latest node
+RUN curl -fsSL install-node.now.sh/latest | bash -s -- -y
+
 ## Install latest docker
 RUN curl -fsSL https://get.docker.com | bash
 
@@ -100,15 +103,34 @@ RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose-cli | gre
    curl -fsSL "https://github.com/docker/compose-cli/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
    chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
 
-## Install vim-go
-RUN git clone https://github.com/fatih/vim-go.git "${HOME}/.vim/pack/plugins/start/vim-go" && \
-    vim +GoInstallBinaries +qall && \
-    vim +"helptags ALL" +qall
+## Create .vim folder
+RUN mkdir -p "${HOME}/.vim"
 
 ## Copy config files
 COPY .tmux.conf "${HOME}/.tmux.conf"
 COPY .bashrc "${HOME}/.bashrc"
-COPY .vimrc "${HOME}/.vimrc"
+COPY .vim-plug "${HOME}/.vim-plug"
+COPY .vim-custom "${HOME}/.vim-custom"
+COPY coc-settings.json "${HOME}/.vim/coc-settings.json"
+
+## Install vim plugins
+RUN cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
+    curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
+    vim +'PlugInstall --sync' +qa && \
+    mkdir -p "${HOME}/.config/coc" && \
+    vim +'CocInstall -sync coc-prettier coc-html coc-json coc-yaml coc-pyright coc-tsserver' +qa
+
+## Create .vimrc from plugins & custom overrides
+RUN cat "${HOME}/.vim-plug" "${HOME}/.vim-custom" > "${HOME}/.vimrc"
+
+## Install python libraries
+RUN pip3 install black
+
+## Install go packages
+### Note: coc-go installs gopls when using vim - instead of coc-go, just install gopls so it is ready on container startup.
+### Other coc-* extensions behave much better.
+RUN go install golang.org/x/tools/gopls@latest && \
+    go install github.com/go-delve/delve/cmd/dlv@latest
 
 ## Cleanup
 RUN sudo apt-get clean && \

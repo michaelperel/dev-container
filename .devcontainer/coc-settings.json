@@ -1,0 +1,13 @@
+{
+  "languageserver": {
+    // https://github.com/golang/tools/blob/master/gopls/doc/vim.md#cocnvim
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"],
+      "initializationOptions": {
+        "usePlaceholders": true
+      }
+    }
+  }
+}
