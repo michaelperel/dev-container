@@ -186,6 +186,5 @@ set undofile
 set undodir=/tmp
 
 " Set colorscheme
-" colorscheme default
 colorscheme gruvbox
 set background=dark
