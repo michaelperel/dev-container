@@ -4,8 +4,7 @@
     "golang": {
       "command": "gopls",
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-      "filetypes": ["go"],
-      "disableDiagnostics": true
+      "filetypes": ["go"]
     }
   }
 }
