@@ -7,7 +7,7 @@
 # Using a Pre-built Container
 * To use a nightly, pre-built container for linux/amd64 or linux/arm64:
 ```
-docker run --rm -it -v ${PWD}:/nonroot/home/workspaces/app mperel/dev-container
+docker run --rm -it -v ${PWD}:/home/nonroot/workspaces/app mperel/dev-container
 ```
 
 # Building From Scratch

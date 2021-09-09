@@ -29,7 +29,8 @@ RUN apt-get -yq update && \
     jq \
     gettext-base \
     uuid-runtime \
-    postgresql-client
+    postgresql-client \
+    htop
 
 ## Install latest python
 RUN add-apt-repository ppa:deadsnakes/ppa -y && \
@@ -69,7 +70,7 @@ RUN TERRAFORM_VERSION="$(curl -fsSL https://releases.hashicorp.com/terraform/ | 
 
 # Customize environment for nonroot user
 ARG USERNAME=nonroot
-ENV HOME=/nonroot/home
+ENV HOME=/home/nonroot
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
