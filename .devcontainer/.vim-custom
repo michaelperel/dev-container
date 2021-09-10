@@ -2,7 +2,8 @@
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
 " format autoimport / format go code on write
-autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+autocmd BufWritePre *.go,*.py :silent call CocAction('runCommand', 'editor.action.organizeImport')
+autocmd BufWritePre *.go,*.py :silent call CocAction('runCommand', 'editor.action.format')
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
