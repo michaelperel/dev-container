@@ -1,3 +1,25 @@
+" => General settings
+" Indent correctly
+filetype plugin indent on
+
+" Automatically close braces
+inoremap {<CR> {<CR>}<Esc>ko
+
+" Remap keys
+imap jj <Esc>
+let mapleader = ","
+
+" Line numbers
+set number
+
+" Maintain undo history between sessions
+set undofile
+set undodir=/tmp
+
+" Set colorscheme
+colorscheme gruvbox
+set background=dark
+
 " => coc.nvim
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
@@ -165,27 +187,3 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-
-" => General settings
-" Indent correctly
-filetype plugin indent on
-
-" Automatically close braces
-inoremap {<CR> {<CR>}<Esc>ko
-
-" Remap keys
-imap jj <Esc>
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" Line numbers
-set number
-
-" Maintain undo history between sessions
-set undofile
-set undodir=/tmp
-
-" Set colorscheme
-colorscheme gruvbox
-set background=dark
