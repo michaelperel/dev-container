@@ -1,40 +1,39 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json
 // Up-to-date default dev-containers: https://github.com/microsoft/vscode-dev-containers
 {
-	"name": "Dev Dockerfile",
-	"dockerFile": "Dockerfile",
-	"settings": {
-		"remoteUser": "nonroot",
-		"files.eol": "\n",
-		"terminal.integrated.profiles.linux": {
-			"bash": {
-				"path": "bash",
-				"icon": "terminal-bash"
-			}
-		},
-		"terminal.integrated.defaultProfile.linux": "bash",
-		"vim.insertModeKeyBindings": [
-			{
-				"before": [
-					"j",
-					"j"
-				],
-				"after": [
-					"<Esc>"
-				]
-			}
-		],
-		"[go]": {
-			"editor.formatOnSave": true
-		},
-		"[python]": {
-			"editor.formatOnSave": true,
-		},
-		"python.formatting.provider": "black",
-	},
-	"extensions": [
-		"golang.go",
-		"vscodevim.vim",
-		"ms-python.python"
-	]
+  "name": "Dev Dockerfile",
+  "dockerFile": "Dockerfile",
+  "settings": {
+    "remoteUser": "nonroot",
+    "files.eol": "\n",
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "bash",
+        "icon": "terminal-bash"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "vim.insertModeKeyBindings": [
+      {
+        "before": ["j", "j"],
+        "after": ["<Esc>"]
+      }
+    ],
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[go]": {
+      "editor.defaultFormatter": null
+    },
+    "[python]": {
+      "editor.defaultFormatter": null
+    },
+    "python.formatting.provider": "black"
+  },
+  "extensions": [
+    "golang.go",
+    "vscodevim.vim",
+    "ms-python.python",
+    "ms-azuretools.vscode-docker",
+    "esbenp.prettier-vscode"
+  ]
 }

@@ -130,8 +130,7 @@ RUN pip3 install black
 ## Install go packages
 ### Note: coc-go installs gopls when using vim - instead of coc-go, just install gopls so it is ready on container startup.
 ### Other coc-* extensions behave much better.
-### Note: there appears to be a memory leak in new gopls versions: hardcode to version that works
-RUN go install golang.org/x/tools/gopls@v0.6.11 && \
+RUN go install golang.org/x/tools/gopls@latest && \
     go install github.com/go-delve/delve/cmd/dlv@latest
 
 ## Cleanup
@@ -139,5 +138,5 @@ RUN sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
 # Mimic VSCode's workspace
-RUN mkdir -p "${HOME}/workspaces/app"
-WORKDIR "${HOME}/workspaces/app"
+RUN mkdir -p "${HOME}/workspaces/dev-container"
+WORKDIR "${HOME}/workspaces/dev-container"

@@ -1,6 +1,12 @@
 " => General settings
-" Indent correctly
+" Indent correctly for different file types
 filetype plugin indent on
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+
+autocmd BufRead,BufNewFile *.html,*.js,*.ts,*.vue,*.jsx,*.css,*.json,*.yaml,*.yml,*.md setlocal shiftwidth=2 softtabstop=2 tabstop=2 expandtab
+autocmd BufRead,BufNewFile *.py setlocal expandtab
 
 " Automatically close braces
 inoremap {<CR> {<CR>}<Esc>ko
@@ -23,9 +29,8 @@ set background=dark
 " => coc.nvim
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
-" format autoimport / format go code on write
-autocmd BufWritePre *.go,*.py :silent call CocAction('runCommand', 'editor.action.organizeImport')
-autocmd BufWritePre *.go,*.py :silent call CocAction('runCommand', 'editor.action.format')
+" automatically add imports for go
+autocmd BufWritePre *.go :silent call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim

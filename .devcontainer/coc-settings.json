@@ -1,4 +1,5 @@
 {
+  "coc.preferences.formatOnSaveFiletypes": ["*"],
   "python.formatting.provider": "black",
   "languageserver": {
     // https://github.com/golang/tools/blob/master/gopls/doc/vim.md#cocnvim
