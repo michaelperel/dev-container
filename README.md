@@ -2,7 +2,7 @@
 ![cd](https://github.com/michaelperel/dev-container/workflows/cd/badge.svg)
 
 # What is this?
-* A container based on ubuntu for developing applications in go
+* A container based on ubuntu for developing applications in go and python
 
 # Using a Pre-built Container
 * To use a nightly, pre-built container for linux/amd64 or linux/arm64:
@@ -24,3 +24,8 @@ docker build -f .devcontainer/Dockerfile --build-arg TARGETPLATFORM=<either linu
 ```
 docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd64 -t mperel/dev-buildx-container .devcontainer
 ```
+
+# VSCode
+* In your project, copy `.devcontainer/devcontainer.json`
+* Add `.devcontainer/Dockerfile` with the contents `FROM mperel/dev-container`
+* In the command pallette, run `Go: Install/Update tools`

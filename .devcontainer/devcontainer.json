@@ -1,28 +1,18 @@
-// For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
-// https://github.com/microsoft/vscode-dev-containers/tree/master/containers/docker-existing-dockerfile
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json
+// Up-to-date default dev-containers: https://github.com/microsoft/vscode-dev-containers
 {
 	"name": "Dev Dockerfile",
 	"dockerFile": "Dockerfile",
-	// The optional 'runArgs' property can be used to specify additional runtime arguments.
-	"runArgs": [
-		// Enable go debugger
-		"--cap-add=SYS_PTRACE",
-		"--security-opt",
-		"seccomp=unconfined",
-		// map host docker daemon into container for sibling containers
-		"-v",
-		"/var/run/docker.sock:/var/run/docker.sock",
-	],
 	"settings": {
 		"remoteUser": "nonroot",
-		// General settings
 		"files.eol": "\n",
-		"terminal.integrated.shell.linux": "/bin/bash",
-		// Go settings
-		"go.lintTool": "golangci-lint",
-		"go.lintFlags": [
-			"--fast"
-		],
+		"terminal.integrated.profiles.linux": {
+			"bash": {
+				"path": "bash",
+				"icon": "terminal-bash"
+			}
+		},
+		"terminal.integrated.defaultProfile.linux": "bash",
 		"vim.insertModeKeyBindings": [
 			{
 				"before": [
@@ -34,29 +24,17 @@
 				]
 			}
 		],
-		// Go recommended settings with modules: https://github.com/golang/tools/blob/master/gopls/doc/vscode.md#vscode
-		"go.useLanguageServer": true,
 		"[go]": {
+			"editor.formatOnSave": true
+		},
+		"[python]": {
 			"editor.formatOnSave": true,
-			"editor.codeActionsOnSave": {
-				"source.organizeImports": true,
-			},
-			// Optional: Disable snippets, as they conflict with completion ranking.
-			"editor.snippetSuggestions": "none",
 		},
-		"[go.mod]": {
-			"editor.formatOnSave": true,
-			"editor.codeActionsOnSave": {
-				"source.organizeImports": true,
-			},
-		},
-		"gopls": {
-			// Add parameter placeholders when completing a function.
-			"usePlaceholders": true,
-		},
+		"python.formatting.provider": "black",
 	},
 	"extensions": [
 		"golang.go",
 		"vscodevim.vim",
+		"ms-python.python"
 	]
 }
