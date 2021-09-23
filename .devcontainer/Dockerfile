@@ -125,7 +125,7 @@ RUN cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
 RUN cat "${HOME}/.vim-plug" "${HOME}/.vim-custom" > "${HOME}/.vimrc"
 
 ## Install python libraries
-RUN pip3 install black
+RUN pip3 install black pandas numpy matplotlib jupyterlab
 
 ## Install go packages
 ### Note: coc-go installs gopls when using vim - instead of coc-go, just install gopls so it is ready on container startup.
