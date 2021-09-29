@@ -30,6 +30,7 @@ RUN apt-get -yq update && \
     gettext-base \
     uuid-runtime \
     postgresql-client \
+    sqlite3 \
     htop
 
 ## Install latest python
