@@ -31,6 +31,9 @@ RUN apt-get -yq update && \
     uuid-runtime \
     postgresql-client \
     sqlite3 \
+    pandoc \
+    texlive \
+    texlive-latex-extra \
     htop
 
 ## Install latest python
