@@ -34,6 +34,7 @@ RUN apt-get -yq update && \
     pandoc \
     texlive \
     texlive-latex-extra \
+    wkhtmltopdf \
     htop
 
 ## Install latest python
