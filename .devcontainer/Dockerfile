@@ -56,6 +56,12 @@ RUN curl -fsSL https://get.docker.com | bash
 ## Install latest Azure CLI
 RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
 
+## Install latest doctl
+RUN DOCTL_VERSION="$(git ls-remote https://github.com/digitalocean/doctl | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+    ARCH=$(basename "${TARGETPLATFORM}") && \
+    curl -fsSL "https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-${ARCH}.tar.gz" | tar -xz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/doctl
+
 ## Install latest kubectl
 RUN KUBECTL_VERSION="$(curl -fsSL https://storage.googleapis.com/kubernetes-release/release/stable.txt)" && \
     ARCH=$(basename "${TARGETPLATFORM}") && \
