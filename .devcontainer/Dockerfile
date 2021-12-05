@@ -84,22 +84,14 @@ ARG USERNAME=nonroot
 ENV HOME=/home/nonroot
 ARG USER_UID=1000
 ARG USER_GID=1000
-RUN groupadd --non-unique --gid "${USER_GID}" "${USERNAME}" \
-    && useradd --non-unique --uid "${USER_UID}" --gid "${USER_GID}" -m "${USERNAME}" \
-    && apt-get update \
-    && apt-get -yq install sudo \
-    && echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
-    && chmod 0440 "/etc/sudoers.d/${USERNAME}" && \
-    mkdir -p "${HOME}" && \
-    usermod -aG docker "${USERNAME}" && \
-    chown -R "${USER_UID}":"${USER_GID}" "${HOME}"
-USER "${USERNAME}"
-
-## Set go environment variables
-ENV GOROOT="/usr/local/go"
-ENV GOPATH="${HOME}/go"
-ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${HOME}/.local/bin:${PATH}"
-RUN echo "export PATH=${PATH}" | sudo tee -a "${HOME}/.bashrc"
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" && \
+    useradd --uid "${USER_UID}" --gid "${USER_GID}" --create-home "${USERNAME}" && \
+    apt-get update && \
+    apt-get -yq install sudo && \
+    echo "${USERNAME}" ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" && \
+    chmod 0440 "/etc/sudoers.d/${USERNAME}" && \
+    usermod -aG docker "${USERNAME}"
+USER "${USERNAME}:${USERNAME}"
 
 ## Install latest docker-lock
 RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
@@ -115,17 +107,11 @@ RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose-cli | gre
    curl -fsSL "https://github.com/docker/compose-cli/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
    chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
 
-## Create .vim folder
-RUN mkdir -p "${HOME}/.vim"
-
-## Copy config files
-COPY .tmux.conf "${HOME}/.tmux.conf"
-COPY .bashrc "${HOME}/.bashrc"
-COPY .vim-plug "${HOME}/.vim-plug"
-COPY .vim-custom "${HOME}/.vim-custom"
-COPY coc-settings.json "${HOME}/.vim/coc-settings.json"
-
 ## Install vim plugins
+RUN mkdir -p "${HOME}/.vim"
+COPY --chown="${USERNAME}:${USERNAME}" .vim-plug "${HOME}/.vim-plug"
+COPY --chown="${USERNAME}:${USERNAME}" .vim-custom "${HOME}/.vim-custom"
+COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
 RUN cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
     curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +'PlugInstall --sync' +qa && \
@@ -136,13 +122,27 @@ RUN cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
 RUN cat "${HOME}/.vim-plug" "${HOME}/.vim-custom" > "${HOME}/.vimrc"
 
 ## Install python libraries
+ENV PATH="${HOME}/.local/bin:${PATH}"
 RUN pip3 install black pandas numpy matplotlib jupyterlab
 
 ## Install go packages
 ### Note: coc-go installs gopls when using vim - instead of coc-go, just install gopls so it is ready on container startup.
 ### Other coc-* extensions behave much better.
+ENV GOROOT="/usr/local/go"
+ENV GOPATH="${HOME}/go"
+ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
 RUN go install golang.org/x/tools/gopls@latest && \
     go install github.com/go-delve/delve/cmd/dlv@latest
+
+## Copy configs
+COPY --chown="${USERNAME}:${USERNAME}" .tmux.conf "${HOME}/.tmux.conf"
+COPY --chown="${USERNAME}:${USERNAME}" .bashrc "${HOME}/.bashrc"
+
+## Persist path
+RUN echo "export PATH=${PATH}" >> "${HOME}/.bashrc"
+
+## Copy optional installations
+COPY --chown="${USERNAME}:${USERNAME}" .optional_installations "${HOME}/.optional_installations"
 
 ## Cleanup
 RUN sudo apt-get clean && \
