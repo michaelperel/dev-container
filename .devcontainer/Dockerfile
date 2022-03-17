@@ -48,9 +48,6 @@ RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | 
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C /usr/local
 
-## Install latest node
-RUN curl -fsSL install-node.now.sh/latest | bash -s -- -y
-
 ## Install latest docker
 RUN curl -fsSL https://get.docker.com | bash
 
@@ -93,6 +90,10 @@ RUN groupadd --gid "${USER_GID}" "${USERNAME}" && \
     usermod -aG docker "${USERNAME}"
 USER "${USERNAME}:${USERNAME}"
 
+## Delete default configs
+RUN rm "${HOME}/.profile" "${HOME}/.bashrc" && \
+    touch "${HOME}/.bashrc"
+
 ## Install latest docker-lock
 RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
     DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/safe-waters/docker-lock | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
@@ -107,12 +108,19 @@ RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose-cli | gre
    curl -fsSL "https://github.com/docker/compose-cli/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
    chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
 
+## Install latest node
+RUN curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh" | PROFILE="${HOME}/.bashrc" bash && \
+    source "${HOME}/.bashrc" && \
+    nvm install node && \
+    nvm use node
+
 ## Install vim plugins
 RUN mkdir -p "${HOME}/.vim"
 COPY --chown="${USERNAME}:${USERNAME}" .vim-plug "${HOME}/.vim-plug"
 COPY --chown="${USERNAME}:${USERNAME}" .vim-custom "${HOME}/.vim-custom"
 COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
-RUN cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
+RUN source "${HOME}/.bashrc" && \
+    cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
     curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +'PlugInstall --sync' +qa && \
     mkdir -p "${HOME}/.config/coc" && \
@@ -136,10 +144,13 @@ RUN go install golang.org/x/tools/gopls@latest && \
 
 ## Copy configs
 COPY --chown="${USERNAME}:${USERNAME}" .tmux.conf "${HOME}/.tmux.conf"
-COPY --chown="${USERNAME}:${USERNAME}" .bashrc "${HOME}/.bashrc"
+COPY --chown="${USERNAME}:${USERNAME}" .bashrc "${HOME}/.bashrc.tmp"
+RUN cat "${HOME}/.bashrc.tmp" >> "${HOME}/.bashrc" && \
+    rm "${HOME}/.bashrc.tmp"
 
 ## Persist path
-RUN echo "export PATH=${PATH}" >> "${HOME}/.bashrc"
+RUN source "${HOME}/.bashrc" && \
+    echo "export PATH=${PATH}" >> "${HOME}/.bashrc"
 
 ## Copy optional installations
 COPY --chown="${USERNAME}:${USERNAME}" .optional_installations "${HOME}/.optional_installations"
