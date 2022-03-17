@@ -44,7 +44,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     ln -s /usr/bin/python3 /usr/bin/python
 
 ## Install latest go
-RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
+RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep -oE "refs/tags/go[0-9]+\.[0-9]+(\.[0-9])?$" | sed 's|refs/tags/go||g' | sort --version-sort | tail -n 1)" && \
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://dl.google.com/go/go${GO_VERSION}.linux-${ARCH}.tar.gz" | tar -xz -C /usr/local
 
