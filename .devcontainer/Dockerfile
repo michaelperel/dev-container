@@ -37,6 +37,11 @@ RUN apt-get -yq update && \
     wkhtmltopdf \
     htop
 
+## Install latest vim
+RUN add-apt-repository ppa:jonathonf/vim && \
+	apt-get update && \
+	apt-get -yq install vim
+
 ## Install latest python
 RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
@@ -142,18 +147,20 @@ ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
 RUN go install golang.org/x/tools/gopls@latest && \
     go install github.com/go-delve/delve/cmd/dlv@latest
 
-## Copy configs
-COPY --chown="${USERNAME}:${USERNAME}" .tmux.conf "${HOME}/.tmux.conf"
-COPY --chown="${USERNAME}:${USERNAME}" .bashrc "${HOME}/.bashrc.tmp"
-RUN cat "${HOME}/.bashrc.tmp" >> "${HOME}/.bashrc" && \
-    rm "${HOME}/.bashrc.tmp"
+## Customize tmux
+RUN echo "set-option -g default-command /bin/bash" > "${HOME}/.tmux.conf" && \
+    echo "set-option -g mouse on" >> "${HOME}/.tmux.conf"
 
-## Persist path
-RUN source "${HOME}/.bashrc" && \
-    echo "export PATH=${PATH}" >> "${HOME}/.bashrc"
+## Customize bashrc
+RUN echo "export TERM=xterm-color" >> "${HOME}/.bashrc" && \
+    sudo cat /root/.bashrc >> "${HOME}/.bashrc" && \
+    echo "set -o vi" >> "${HOME}/.bashrc" && \
+    echo "alias tmux='tmux -u'" >> "${HOME}/.bashrc" && \
+    echo "export PATH=${PATH}" >> "${HOME}/.bashrc" && \
+    echo "nvm use node > /dev/null 2>&1" >> "${HOME}/.bashrc"
 
-## Copy optional installations
-COPY --chown="${USERNAME}:${USERNAME}" .optional_installations "${HOME}/.optional_installations"
+## Customize .profile
+RUN sudo cat /root/.profile >> "${HOME}/.profile"
 
 ## Cleanup
 RUN sudo apt-get clean && \

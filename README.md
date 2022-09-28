@@ -47,7 +47,3 @@ docker buildx build -f .devcontainer/Dockerfile --platform linux/arm64,linux/amd
 
 - In the command palette, run `Remote-Containers: Reopen in Container`
 - In the command palette, run `Go: Install/Update tools`
-
-# Optional Installations
-
-- Some tools that may be too burdensome to always install or may overwrite more common tools can be installed from `${HOME}/.optional_installations` once in the container. For instance, executing `${HOME}/.optional_installations/gotip.sh` will install gotip, alias go to gotip, and configure gopls to use gotip.
