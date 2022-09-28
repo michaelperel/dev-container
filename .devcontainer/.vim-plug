@@ -1,4 +1,5 @@
 " Plugins via vim-plug
 call plug#begin('~/.vim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'posva/vim-vue'
 call plug#end()
