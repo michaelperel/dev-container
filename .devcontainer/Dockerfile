@@ -56,30 +56,11 @@ RUN GO_VERSION="$(git ls-remote https://github.com/golang/go | grep -oE "refs/ta
 ## Install latest docker
 RUN curl -fsSL https://get.docker.com | bash
 
-## Install latest Azure CLI
-RUN curl -fsSL https://aka.ms/InstallAzureCLIDeb | bash
-
 ## Install latest doctl
 RUN DOCTL_VERSION="$(git ls-remote https://github.com/digitalocean/doctl | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
     ARCH=$(basename "${TARGETPLATFORM}") && \
     curl -fsSL "https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-${ARCH}.tar.gz" | tar -xz -C /usr/local/bin && \
     chmod +x /usr/local/bin/doctl
-
-## Install latest kubectl
-RUN KUBECTL_VERSION="$(curl -fsSL https://storage.googleapis.com/kubernetes-release/release/stable.txt)" && \
-    ARCH=$(basename "${TARGETPLATFORM}") && \
-    curl -fsSL "https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl" -o /usr/local/bin/kubectl && \
-    chmod +x /usr/local/bin/kubectl
-
-## Install latest helm
-RUN curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-## Install latest terraform
-RUN TERRAFORM_VERSION="$(curl -fsSL https://releases.hashicorp.com/terraform/ | grep -oE "[0-9]+\.[0-9]+\.[0-9]+<" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n 1)" && \
-    ARCH=$(basename "${TARGETPLATFORM}") && \
-    [[ "${ARCH}" == "arm64" ]] && ARCH=${ARCH//[0-9]/}; \
-    curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip" -o terraform.zip && \
-    unzip terraform.zip -d /usr/local/bin
 
 # Customize environment for nonroot user
 ARG USERNAME=nonroot
@@ -107,10 +88,11 @@ RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
     curl -fsSL "https://github.com/safe-waters/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock_${DOCKER_LOCK_VERSION}_Linux_${ARCH}.tar.gz" | tar -xz -C "${HOME}/.docker/cli-plugins" && \
     chmod +x "${HOME}/.docker/cli-plugins/docker-lock"
 
-## Install compose-cli
-RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose-cli | grep refs/tags | cut -f2 | sed 's@refs/tags/@@' | sort --version-sort | tail -n 1)" && \
+## Install docker compose
+RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose | grep 'refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$' | cut -f2 | sed 's@refs/tags/@@' | sort --version-sort | tail -n 1)" && \
    ARCH=$(basename "${TARGETPLATFORM}") && \
-   curl -fsSL "https://github.com/docker/compose-cli/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
+   [[ "${ARCH}" == "amd64" ]] && ARCH="x86_64"; \
+   curl -fsSL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
    chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
 
 ## Install latest node
