@@ -92,6 +92,7 @@ RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
 RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose | grep 'refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$' | cut -f2 | sed 's@refs/tags/@@' | sort --version-sort | tail -n 1)" && \
    ARCH=$(basename "${TARGETPLATFORM}") && \
    [[ "${ARCH}" == "amd64" ]] && ARCH="x86_64"; \
+   [[ "${ARCH}" == "arm64" ]] && ARCH="aarch64"; \
    curl -fsSL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
    chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
 
