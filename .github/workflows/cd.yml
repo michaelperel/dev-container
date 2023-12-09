@@ -13,13 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: docker lock rewrite
-        run: |
-          set -euo pipefail
-          docker run -v "${PWD}":/run safewaters/docker-lock lock rewrite
-          sudo chmod +r .devcontainer/Dockerfile
-        shell: bash
-
       - name: setup qemu
         uses: docker/setup-qemu-action@v2
 

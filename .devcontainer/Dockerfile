@@ -80,22 +80,6 @@ USER "${USERNAME}:${USERNAME}"
 RUN rm "${HOME}/.profile" "${HOME}/.bashrc" && \
     touch "${HOME}/.bashrc"
 
-## Install latest docker-lock
-RUN mkdir -p "${HOME}/.docker/cli-plugins" && \
-    DOCKER_LOCK_VERSION="$(git ls-remote https://github.com/safe-waters/docker-lock | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
-    ARCH=$(basename "${TARGETPLATFORM}") && \
-    [[ "${ARCH}" == "amd64" ]] && ARCH="x86_64"; \
-    curl -fsSL "https://github.com/safe-waters/docker-lock/releases/download/v${DOCKER_LOCK_VERSION}/docker-lock_${DOCKER_LOCK_VERSION}_Linux_${ARCH}.tar.gz" | tar -xz -C "${HOME}/.docker/cli-plugins" && \
-    chmod +x "${HOME}/.docker/cli-plugins/docker-lock"
-
-## Install docker compose
-RUN COMPOSE_VERSION="$(git ls-remote https://github.com/docker/compose | grep 'refs/tags/v[0-9]\+\.[0-9]\+\.[0-9]\+$' | cut -f2 | sed 's@refs/tags/@@' | sort --version-sort | tail -n 1)" && \
-   ARCH=$(basename "${TARGETPLATFORM}") && \
-   [[ "${ARCH}" == "amd64" ]] && ARCH="x86_64"; \
-   [[ "${ARCH}" == "arm64" ]] && ARCH="aarch64"; \
-   curl -fsSL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH}" -o "${HOME}/.docker/cli-plugins/docker-compose" && \
-   chmod +x "${HOME}/.docker/cli-plugins/docker-compose"
-
 ## Install latest node
 RUN curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh" | PROFILE="${HOME}/.bashrc" bash && \
     source "${HOME}/.bashrc" && \
@@ -104,31 +88,22 @@ RUN curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh" 
 
 ## Install vim plugins
 RUN mkdir -p "${HOME}/.vim"
-COPY --chown="${USERNAME}:${USERNAME}" .vim-plug "${HOME}/.vim-plug"
-COPY --chown="${USERNAME}:${USERNAME}" .vim-custom "${HOME}/.vim-custom"
+COPY --chown="${USERNAME}:${USERNAME}" .vimrc "${HOME}/.vimrc"
 COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
 RUN source "${HOME}/.bashrc" && \
-    cp "${HOME}/.vim-plug" "${HOME}/.vimrc" && \
-    curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
-    vim +'PlugInstall --sync' +qa && \
-    mkdir -p "${HOME}/.config/coc" && \
-    vim +'CocInstall -sync coc-prettier coc-html coc-json coc-yaml coc-pyright coc-tsserver' +qa
-
-## Create .vimrc from plugins & custom overrides
-RUN cat "${HOME}/.vim-plug" "${HOME}/.vim-custom" > "${HOME}/.vimrc"
-
-## Install python libraries
-ENV PATH="${HOME}/.local/bin:${PATH}"
-RUN pip3 install black pandas numpy matplotlib jupyterlab
+curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
+    vim +'PlugInstall --sync' +qa
 
 ## Install go packages
-### Note: coc-go installs gopls when using vim - instead of coc-go, just install gopls so it is ready on container startup.
-### Other coc-* extensions behave much better.
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="${HOME}/go"
 ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"
 RUN go install golang.org/x/tools/gopls@latest && \
     go install github.com/go-delve/delve/cmd/dlv@latest
+
+# Install python libraries
+ENV PATH="${HOME}/.local/bin:${PATH}"
+RUN pip3 install black pandas numpy matplotlib jupyterlab
 
 ## Customize tmux
 RUN echo "set-option -g default-command /bin/bash" > "${HOME}/.tmux.conf" && \
