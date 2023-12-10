@@ -1,12 +1,13 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": ["*"],
-  "python.formatting.provider": "black",
+  "suggest.noselect": true,
   "languageserver": {
-    // https://github.com/golang/tools/blob/master/gopls/doc/vim.md#cocnvim
-    "golang": {
+    "go": {
       "command": "gopls",
-      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-      "filetypes": ["go"]
+      "rootPatterns": ["go.work", "go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"],
+      "initializationOptions": {
+        "usePlaceholders": true
+      }
     }
   }
 }
