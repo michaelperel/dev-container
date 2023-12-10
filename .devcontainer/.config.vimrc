@@ -598,3 +598,4 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 imap jj <Esc>
 map <C-n> :NERDTreeToggle<CR>
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
