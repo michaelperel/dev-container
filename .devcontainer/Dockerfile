@@ -45,19 +45,18 @@ WORKDIR "${HOME}"
 
 # Install go tools
 RUN go install golang.org/x/tools/gopls@latest && \
-    go install github.com/go-delve/delve/cmd/dlv@latest
-
-# Setup vim configurations
-COPY --chown="${USERNAME}:${USERNAME}" .config.vimrc "${HOME}/.config.vimrc"
-COPY --chown="${USERNAME}:${USERNAME}" .plug.vimrc "${HOME}/.vimrc"
-COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
+    go install github.com/go-delve/delve/cmd/dlv@latest && \
+    go install golang.org/x/tools/cmd/goimports@latest
 
 # Install vim plugins
+COPY --chown="${USERNAME}:${USERNAME}" .plug.vimrc "${HOME}/.vimrc"
 RUN curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +'PlugInstall --sync' +qa
 
 # Add configurations, once all plugins are already installed
+COPY --chown="${USERNAME}:${USERNAME}" .config.vimrc "${HOME}/.config.vimrc"
+COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
 RUN cat "${HOME}/.config.vimrc" >> "${HOME}/.vimrc"
 
 # Configure colored shell prompt
