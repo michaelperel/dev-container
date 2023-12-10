@@ -23,7 +23,7 @@ RUN groupadd --gid "${USER_GID}" "${USERNAME}" && \
 
 # Install basic packages
 RUN apt-get update && \
-    apt-get install -yq --no-install-recommends \
+    apt-get install -yq \
     git vim tmux curl wget build-essential cmake gcc \
     shellcheck unzip tree jq postgresql-client sqlite3 htop \
     python3 python3-dev python3-venv python3-pip \
