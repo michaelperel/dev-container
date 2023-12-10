@@ -94,7 +94,7 @@ RUN source "${HOME}/.bashrc" && \
 curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +'PlugInstall --sync' +qa
 
-## Install go packages
+# Install go packages
 ENV GOROOT="/usr/local/go"
 ENV GOPATH="${HOME}/go"
 ENV PATH="${GOROOT}/bin:${GOPATH}/bin:${PATH}"

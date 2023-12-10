@@ -3,7 +3,7 @@
 
 # What is this?
 
-- A container based on Ubuntu for developing cloud based applications in Go, Node, Vue, and Python
+- A container based on Ubuntu for developing cloud based applications in Go
   with CoC.nvim or VSCode
 
 # Terminal (CoC.nvim)
