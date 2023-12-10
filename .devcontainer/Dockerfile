@@ -39,13 +39,17 @@ RUN go install golang.org/x/tools/gopls@latest && \
     go install github.com/go-delve/delve/cmd/dlv@latest
 
 # Setup vim configurations
-COPY --chown=${USERNAME}:${USERNAME} .vimrc ${HOME}/.vimrc
+COPY --chown="${USERNAME}:${USERNAME}" .config.vimrc "${HOME}/.config.vimrc"
+COPY --chown="${USERNAME}:${USERNAME}" .plug.vimrc "${HOME}/.vimrc"
 COPY --chown="${USERNAME}:${USERNAME}" coc-settings.json "${HOME}/.vim/coc-settings.json"
 
 # Install vim plugins
 RUN curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     vim +'PlugInstall --sync' +qa
+
+# Add configurations, so all plugins are already installed
+RUN cat "${HOME}/.config.vimrc" >> "${HOME}/.vimrc"
 
 # Configure colored shell prompt
 RUN echo 'PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' >> "${HOME}/.bashrc"
