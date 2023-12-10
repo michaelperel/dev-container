@@ -80,7 +80,7 @@ Plug 'honza/vim-snippets'
 
 " go
 "" Go Lang Bundle
-Plug 'fatih/vim-go', {'do': ':GoInstallBinaries'}
+" Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 
 
 " html
