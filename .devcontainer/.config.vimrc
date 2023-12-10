@@ -59,7 +59,7 @@ let no_buffers_menu=1
 colorscheme molokai
 
 
-" Better command line completion 
+" Better command line completion
 set wildmenu
 
 " mouse support
@@ -84,7 +84,7 @@ else
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
 
-  
+
   if $COLORTERM == 'gnome-terminal'
     set term=gnome-256color
   else
@@ -92,7 +92,7 @@ else
       set term=xterm-256color
     endif
   endif
-  
+
 endif
 
 
@@ -159,6 +159,7 @@ let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 50
+let g:NERDTreeShowHidden = 1
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*node_modules/
 nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
@@ -345,48 +346,6 @@ autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 soft
 " html
 " for html files, 2 spaces
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
-
-
-" javascript
-let g:javascript_enable_domhtmlcss = 1
-
-" vim-javascript
-augroup vimrc-javascript
-  autocmd!
-  autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
-augroup END
-
-
-" python
-" vim-python
-augroup vimrc-python
-  autocmd!
-  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
-      \ formatoptions+=croq softtabstop=4
-      \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
-augroup END
-
-" jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#goto_assignments_command = "<leader>g"
-let g:jedi#goto_definitions_command = "<leader>d"
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#rename_command = "<leader>r"
-let g:jedi#show_call_signatures = "0"
-let g:jedi#completions_command = "<C-Space>"
-let g:jedi#smart_auto_mappings = 0
-
-" ale
-" :call extend(g:ale_linters, {
-"    \'python': ['flake8'], })
-
-" vim-airline
-let g:airline#extensions#virtualenv#enabled = 1
-
-" Syntax highlight
-let python_highlight_all = 1
-
 
 "*****************************************************************************
 "*****************************************************************************
@@ -599,3 +558,15 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 imap jj <Esc>
 map <C-n> :NERDTreeToggle<CR>
 autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Remove trailing whitespace on save
+fun! StripTrailingWhitespaces()
+  let l:save = winsaveview()
+  %s/\s\+$//e
+  call winrestview(l:save)
+endfun
+
+augroup StripWhitespace
+  autocmd!
+  autocmd BufWritePre * :call StripTrailingWhitespaces()
+augroup END
