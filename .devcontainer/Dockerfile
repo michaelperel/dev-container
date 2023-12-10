@@ -28,9 +28,7 @@ RUN apt-get update && \
     shellcheck unzip tree jq postgresql-client sqlite3 htop \
     python3 python3-dev python3-venv python3-pip \
     nodejs npm && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    ln -s /usr/bin/python3 /usr/bin/python
 
 # Install latest doctl
 RUN DOCTL_VERSION="$(git ls-remote https://github.com/digitalocean/doctl | grep refs/tags | grep -oE "[0-9]+\.[0-9]+\.[0-9]+$" | sort --version-sort | tail -n 1)" && \
