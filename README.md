@@ -16,6 +16,12 @@
 docker run --rm -it -v ${PWD}:/home/nonroot/workspaces/dev-container mperel/dev-container
 ```
 
+or
+
+```
+podman run --rm --userns=keep-id -it -v ${PWD}:/home/nonroot/workspaces/dev-container docker.io/mperel/dev-container
+```
+
 ## Building From Scratch
 
 - By default, the container runs as a nonroot user (as a sudoer) with UID and GID = 1000. This user exists
